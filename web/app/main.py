@@ -1,4 +1,9 @@
-from flask import Flask, url_for, jsonify
+from flask import (
+    Flask, 
+    url_for, 
+    jsonify, 
+    render_template
+)
 from elasticsearch import Elasticsearch
 from datetime import datetime
 import os
@@ -17,6 +22,10 @@ app = Flask(__name__)
 @app.route('/')
 def hello_world():
 	return 'Hello From Momentup'
+
+@app.route('/index')
+def index():
+   return render_template('index.html')
 
 @app.route('/info')
 def api_info():
