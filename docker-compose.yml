@@ -1,0 +1,91 @@
+version: "3.8"
+services:
+  elasticsearch:
+    image: elasticsearch:7.12.0
+    # image: elasticsearch:7.8.0
+    container_name: elasticsearch
+    hostname: elasticsearch
+    environment:
+      - node.name=elasticsearch
+      - discovery.seed_hosts=elasticsearch
+      - cluster.initial_master_nodes=elasticsearch
+      - cluster.name=docker-cluster
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      # - discovery.type=single-node
+      # - "cluster.name=elasticsearch"
+      # - "XPACK_SECURITY_ENABLED=false"
+      # - discovery.type=single-node
+      # - bootstrap.memory_lock=true
+      # - network.host=0.0.0.0
+      # - host:"host.docker.internal"
+      # - discovery.zen.minimum_master_nodes =1
+      # - discovery.type=single-node
+      # - xpack.security.enabled=false
+      # - xpack.monitoring.enabled=false
+      # - xpack.ml.enabled=false
+      # - xpack.graph.enabled=false
+      # - xpack.watcher.enabled=false
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    healthcheck:
+      test: "curl http://elasticsearch:9200"
+      # test: curl -u elastic:elastic -s -f elasticsearch:9200/_cat/health >/dev/null || exit 1
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    volumes:
+      - esdata:/usr/share/elasticsearch/data
+    ports:
+      - "9200:9200"
+      # - "9300:9300"
+    networks:
+      - main_net
+
+  kibana:
+    image: kibana:7.12.0
+    # image: kibana:7.8.0
+    container_name: kibana
+    hostname: kibana
+    environment:
+      ELASTICSEARCH_URL: "http://elasticsearch:9200"
+    ports:
+      - 5601:5601
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+    networks:
+      - main_net
+
+  web:
+    build: ./web
+    container_name: web
+    hostname: web
+    environment:
+      PYTHONUNBUFFERED: 0
+      ELASTICSEARCH_URL: "http://elasticsearch:9200"
+    restart: always
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./web:/app
+    depends_on:
+      elasticsearch:
+        # condition: service_healthy
+        condition: service_started
+      kibana:
+        # condition: service_healthy
+        condition: service_started
+    networks:
+      - main_net
+
+volumes:
+  esdata:
+    driver: local
+  
+networks:
+  main_net:
+    driver: bridge
+
