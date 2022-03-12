@@ -1,4 +1,4 @@
-# momentup-task
+# MOMENTUP Project
 project repo for momentup company
 
 ---
