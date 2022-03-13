@@ -67,16 +67,55 @@ def api_create():
             "content": content,
             "status": status,
         }
+
+        # docs = []
+        # settings = {
+        #         "settings":{
+        #             "number_of_shards":1,
+        #             "number_of_replicas":0
+        #         },
+        #         "mappings":{
+        #             "properties":{
+        #                 "author":{
+        #                     "type":"text"
+        #                 },
+        #                 "article":{
+        #                     "type":"text"
+        #                 },
+        #                 "content":{
+        #                     "type":"text"
+        #                 },
+        #                 "status":{
+        #                     "type":"text"
+        #                 },
+        #             }
+        #         }
+        #     }
+        # record = {
+        #     '_index':index,
+        #     '_type':'_doc',
+        #     '_id':str(id),
+        #     '_source':{
+        #         "author":author,
+        #         "article":article,
+        #         "content":content,
+        #         "status":status
+        #     }
+        # }
+        # docs.append(record)
+        # es.createRecord(index, settings)
+        # es.byGenerator(docs)
+        #
         postCreated = es.createRecord(indexName_=index, jsonData_=record)
         print(index, author, article, content, status, file=sys.stderr)
         print(postCreated, file=sys.stderr)
         if postCreated:
-            flash('Post Created, You can check it from autocomplete by typing : {}'.format(author))
+            flash("Post Created, You can check it from autocomplete by typing  any of these words: '{}'".format(content))
         else :
             flash('Post Cannot Created')
             
         return render_template('create.html')
-        # return redirect(request.url)
+        return redirect(request.url)
     else:
         return render_template('create.html')
 

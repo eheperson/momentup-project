@@ -113,7 +113,7 @@ class Elastic:
         try:
             if indexStatus:
                 res = self._elastic.index(index=indexName_, doc_type=docType_, body=jsonData_)
-                # print("RESsssss1 : {}".format(res), file=sys.stderr) 
+                print("RESsssss1 : {}".format(res), file=sys.stderr) 
                 # print("Error : {}".format(res["_shards"]["failed"]), file=sys.stderr) 
                 if res["_shards"]["failed"] == 1 :
                     dataStored = False
