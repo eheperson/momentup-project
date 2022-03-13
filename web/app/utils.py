@@ -1,57 +1,21 @@
-"""
-Relational DB  -  Elasticsearch
--------------     -------------
-  Database     >    Index
-  Table        >    Type
-  Row          >    Document
-  Column       >    Field
-  Schema       >    Mapping
-
-Relational DB  -  Elasticsearch -  Crud
--------------     -------------   ------
-  GET          >    Select      >  Read
-  PUT          >    Update      >  Update
-  POST         >    Insert      >  Create
-  DELETE       >    Delete      >  Delete
-
-
-"""
-try : 
-    from elasticsearch import Elasticsearch, helpers
-    from datetime import datetime
-    import os
-    import sys
-    import pandas as pd
-    import requests
-    os.system("clear")
-except Exception as e:
-    print("Some modules are missing : {}".format(e))
-
+from elasticsearch import Elasticsearch, helpers
+from datetime import datetime
+import os
+import sys
+import pandas as pd
+import requests
+from faker import Faker
+import os
+import random
+os.system("clear")
 
 ROOT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "."))
 DATA_STORE_DIR = os.path.join(ROOT_DIR, 'datastore')
 
+ES_HOST = os.environ['ELASTICSEARCH_URL']
+print('Elastic host is {}'.format(ES_HOST))
 
 class Elastic:
-    """
-        Wrapper class to simplify operations on elasticsearch framework
-
-        Relational DB  -  Elasticsearch
-        -------------     -------------
-        Database     >    Index
-        Table        >    Type
-        Row          >    Document
-        Column       >    Field
-        Schema       >    Mapping
-
-        Relational DB  -  Elasticsearch -  Crud
-        -------------     -------------   ------
-        GET          >    Select      >  Read
-        PUT          >    Update      >  Update
-        POST         >    Insert      >  Create
-        DELETE       >    Delete      >  Delete
-
-    """
     def __init__(self, hostURL_="http://localhost:9200"):
         self._elastic = None
         self._connected = None
@@ -175,3 +139,86 @@ class Elastic:
         if self.connected:
             res = self._elastic.search(index=indexName_, size=0, body=jsonData_)
             return res
+
+def createDummyPosts():
+    """
+        This method is combination of ./lab/createPostData.py and ./lab/loadPostData.py
+        It helps to create and load some dummy blog post data to the elastic search
+        when the container system builds up.
+    """
+    elastic = Elastic(ES_HOST)
+    fake = Faker()
+    indexName = "the_gig"
+    docs = []
+    #
+    elastic.deleteIndex(indexName)
+    elastic.createIndex(indexName)
+    #
+    postCount = 100
+    postStatus = [
+        "Posted", 
+        "Draft", 
+        "Deleted"
+    ]
+    headerColumns = [
+        'id', 
+        'author', 
+        'article', 
+        'post_date', 
+        'content', 
+        'status', 
+        'like_count', 
+        'commnet_count' 
+    ]
+    #
+    settings = {
+        "settings":{
+            "number_of_shards":1,
+            "number_of_replicas":0
+        },
+        "mappings":{
+            "properties":{
+                "author":{
+                    "type":"text"
+                },
+                "article":{
+                    "type":"text"
+                },
+                "content":{
+                    "type":"text"
+                },
+                "status":{
+                    "type":"text"
+                },
+            }
+        }
+    }
+    #
+    for i in range(postCount):
+        id = "p"+str(i+1)
+        author = fake.name()
+        article = fake.word() + " " + fake.word() + " " + fake.word()
+        post_date = fake.date()
+        content = fake.text().split("\n")
+        content = ''.join(content)
+        # print(content)
+        # input()
+        status = random.choice(postStatus)
+        like_count = random.randint(1,100)
+        comment_count = random.randint(1,100)
+        #
+        record = {
+            '_index':indexName,
+            '_type':'_doc',
+            '_id':str(id),
+            '_source':{
+                "author":str(author),
+                "article":str(article),
+                "content":str(content),
+                "status":str(status)
+            }
+        }
+        docs.append(record)
+    #
+    elastic.createRecord(indexName, settings)
+    elastic.byGenerator(docs)

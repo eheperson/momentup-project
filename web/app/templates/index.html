@@ -33,7 +33,7 @@
                 url: "/autocomplete",
                 type : 'POST',
                 cache: false,
-                data:{'query': e.target.value},
+                data:{'query': e.target.value, 'index':'the_gig'},
                 success: function(html)
                 {
                     console.log(html)
