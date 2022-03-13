@@ -1,11 +1,74 @@
 {% extends 'base.html' %}
 
 {% block content %}
-  <form method="post">
-    <label for="username">Username</label>
-    <input name="username" id="username" required>
-    <label for="password">Password</label>
-    <input type="password" name="password" id="password" required>
-    <input type="submit" value="Register">
-  </form>
+    <div class="container" style="margin-top: 8%;">
+            <div class="row">
+                <div id="logo" class="text-center">
+                    <h1>Blog Post Browser</h1><p>yo</p>
+                </div>
+                <form role="form" id="form-buscar">
+                    <div class="form-group">
+                        <div class="input-group">
+                            <input id="source" class="form-control" type="text" name="search" placeholder="Search..." required/>
+                            <span class="input-group-btn">
+                                <button onclick="btn_submit()" class="btn btn-success" type="submit">
+                                    <i class="glyphicon glyphicon-search" aria-hidden="true"></i> Search
+                                </button>
+                            </span>
+                            <div id="result"></div>
+                        </div>
+                    </div>
+                </form>
+            </div>            
+    </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    const $source = document.querySelector('#source');
+    const $result = document.querySelector('#result');
+
+    const typeHandler = function(e) {
+        $result.innerHTML = e.target.value;
+        console.log(e.target.value);
+
+        $.ajax({
+            url: "/pipe",
+            type : 'POST',
+            cache: false,
+            data:{'data': e.target.value},
+            success: function(html)
+            {
+                console.log(html)
+                var data = html.aggregations.auto_complete.buckets
+                var _ = []
+
+                $.each(data, (index, value)=>{
+                    _.push(value.key)
+                });
+                console.log(_)
+                $( "#source" ).autocomplete({
+                    source: _
+                });
+            }
+        });
+    }
+
+    $source.addEventListener('input', typeHandler) // register for oninput
+    $source.addEventListener('propertychange', typeHandler) // for IE8
+
+    function btn_submit()
+    {
+        sessionStorage.setItem('datastore', $("#source").val() )
+    }
+
+    $( document ).ready(function() {
+
+        var data = sessionStorage.getItem('datastore')
+        $("#source").val(data);
+    });
+
+
+
+</script>
 {% endblock %}

@@ -33,9 +33,9 @@ services:
     healthcheck:
       test: "curl http://elasticsearch:9200"
       # test: curl -u elastic:elastic -s -f elasticsearch:9200/_cat/health >/dev/null || exit 1
-      interval: 30s
+      interval: 2s
       timeout: 10s
-      retries: 5
+      retries: 50
     volumes:
       - esdata:/usr/share/elasticsearch/data
     ports:

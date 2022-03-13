@@ -16,11 +16,8 @@ Relational DB  -  Elasticsearch -  Crud
 
 
 """
-from typing import final
-
-
 try : 
-    from elasticsearch import Elasticsearch
+    from elasticsearch import Elasticsearch, helpers
     from datetime import datetime
     import os
     import sys
@@ -30,9 +27,30 @@ try :
 except Exception as e:
     print("Some modules are missing : {}".format(e))
 
+
+ROOT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "."))
+DATA_STORE_DIR = os.path.join(ROOT_DIR, 'datastore')
+
+
 class Elastic:
     """
         Wrapper class to simplify operations on elasticsearch framework
+
+        Relational DB  -  Elasticsearch
+        -------------     -------------
+        Database     >    Index
+        Table        >    Type
+        Row          >    Document
+        Column       >    Field
+        Schema       >    Mapping
+
+        Relational DB  -  Elasticsearch -  Crud
+        -------------     -------------   ------
+        GET          >    Select      >  Read
+        PUT          >    Update      >  Update
+        POST         >    Insert      >  Create
+        DELETE       >    Delete      >  Delete
+
     """
     def __init__(self, hostURL_="http://localhost:9200"):
         self._elastic = None
@@ -67,7 +85,7 @@ class Elastic:
             Check the : GET <index_name>/_search (from kibana dev-tools)
         """
         if self.connect:
-            self._elastic.indices.create(index=indexName_, ignore=400)
+            self._elastic.indices.create(index=indexName_, ignore=[400,404])
         else:
             print("Cannot Create an index !")
 
@@ -138,35 +156,11 @@ class Elastic:
             dataStored = False
         finally:
             return dataStored
-
-
-
-if __name__ == '__main__':
-
-    ES_URL = "http://localhost:9200"
-    elastic = Elastic(ES_URL)
-    print("Elasticsearch connection status : {}".format("Succesfull" if elastic.connected else "Failed"))
-    #
-    indexName = "test-index"
-    elastic.createIndex(indexName)
-    # elastic.deleteIndex(indexName)
-    #
-    e1={
-        "first_name":"Soumil",
-        "last_name":"Shah",
-        "age": 24,
-        "about": "Full stack Software Developers ",
-        "interests": ['Youtube','music'],
-    }
-    e2={
-        "first_name":"nitin",
-        "last_name":"Shah",
-        "age": 58,
-        "about": "Soumil father ",
-        "interests": ['Stock','Relax'],
-    }
-    #
-    elastic.createRecord(indexName_=indexName, jsonData_=e1)
-    elastic.createRecord(indexName_=indexName, jsonData_=e2)
-
     
+    def byGenerator(self, generator_):
+        try:
+            res = helpers.bulk(self._elastic, generator_)
+            print(res)
+            print("Great Job !")
+        except Exception as e:
+            print(e)
