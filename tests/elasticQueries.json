@@ -1,0 +1,272 @@
+
+// GET <index_name>/_search
+{
+    "_source": ["author", "article", "content", "status"],
+    "size":20,
+    "query":{
+        "match_phrase":{
+            "author":"John Doe"
+        }
+    }
+}
+
+// GET <index_name>/_search
+{
+    "_source": ["author", "article", "content", "status"],
+    "size":20,
+    "query":{
+        "match":{
+            // match_phrase, match
+            "author":"John Doe"
+        }
+    }
+}
+
+// aggregating
+// GET <index_name>/_search
+{
+    "size":0,
+    "aggs":{
+        "author_names":{
+            "terms":{
+                "field":"author.keyword",
+                "size":5,
+                "order":{
+                    "_key":"asc"
+                }
+            }
+        }
+    }
+}
+
+// aggregating
+// GET <index_name>/_search
+{
+    "size":0,
+    "aggs":{
+        "status_types":{
+            "terms":{
+                "field":"status.keyword",
+                "size":5,
+                "order":{
+                    "count":"desc"
+                }
+            }
+        }
+    }
+}
+
+// aggregating
+// GET <index_name>/_search
+{
+    "size":0,
+    "aggs":{
+        "author_names":{
+            "terms":{
+                "field":"author.keyword",
+                "size":5,
+                "order":{
+                    "_key":"asc"
+                }
+            }
+        },
+        "status":{
+            "terms":{
+                "field":"status.keyword",
+                "size":5,
+                "order":{
+                    "_key":"desc"
+                }
+            }
+        }
+    }
+}
+
+
+// aggregating
+// GET <index_name>/_search
+{
+    "_source": ["author", "article", "content", "status"],
+    "size":20,
+    "query":{
+        "match":{
+            "author":"John Doe"
+        },
+    "aggs":{
+        "author_names":{
+            "terms":{
+                "field":"author.keyword",
+                "size":5,
+                "order":{
+                    "_key":"asc"
+                }
+            }
+        },
+        "status":{
+            "terms":{
+                "field":"status.keyword",
+                "size":5,
+                "order":{
+                    "_key":"desc"
+                }
+            }
+        }
+    }
+}
+
+// boolean querying
+// GET <index_name>/_search
+{
+    "size":10,
+    "query": {
+        "bool": {
+            "must":[],
+            "filter":[],
+            "should":[],
+            "must_not":[],
+        }
+    }
+}
+
+// boolean querying
+// GET <index_name>/_search
+{
+    "size":10,
+    "query": {
+        "bool": {
+            "must":[],
+            "filter":[],
+            "should":[
+                {
+                    "match":{
+                        "author":{
+                            "query":"John"
+                        }
+                    }
+                }
+            ],
+            "must_not":[],
+        }
+    }
+}
+
+// boolean querying
+// GET <index_name>/_search
+{
+    "size":10,
+    "query": {
+        "bool": {
+            "must":[],
+            "filter":[],
+            "should":[
+                {
+                    "match":{
+                        "author":{
+                            "query":"John"
+                        }
+                    }
+                },
+                {
+                    "match":{
+                        "content":{
+                            "query":"enivicivokki"
+                        }
+                    }
+
+                }
+            ],
+            "must_not":[],
+        }
+    }
+}
+
+
+
+// boolean querying
+// GET <index_name>/_search
+{
+    "size":10,
+    "query": {
+        "bool": {
+            "must":[],
+            "filter":[
+                "match":{
+                    "content.keyword":{
+                        "query":"enivicivokki"
+                    }
+                }
+            ],
+            "should":[
+                {
+                    "match":{
+                        "author":{
+                            "query":"John"
+                        }
+                    }
+                },
+                {
+                    "match":{
+                        "content":{
+                            "query":"enivicivokki"
+                        }
+                    }
+
+                }
+            ],
+            "must_not":[
+                {
+                    "match":{
+                        "status":{
+                            "query":"DELETED"
+                        }
+                    }
+                }
+            ],
+        }
+    }
+}
+
+// query string
+// GET <index_name>/_search
+{
+    "query":{
+        "query_styring":{
+            "query": "(ehe) AND (ene)",
+            "default_field": "content"
+        }
+    }
+}
+
+// query string
+// GET <index_name>/_search
+{
+    "query":{
+        "query_styring":{
+            "query": "(ehe) OR (ene)",
+            "default_field": "content"
+        }
+    }
+}
+
+// query string
+// GET <index_name>/_search
+{
+    "query":{
+        "query_styring":{
+            "query": "ehe*",
+            "fields": ["content", "article"]
+        }
+    }
+}
+
+// query string
+// GET <index_name>/_search
+{
+    "query":{
+        "query_styring":{
+            "query": "ehe*",
+            "fields": ["content", "article"],
+            "tie_breaker":0
+        }
+    }
+}
