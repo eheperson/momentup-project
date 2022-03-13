@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    {% for message in get_flashed_messages() %}
+        <div class="alert alert-warning" style="margin-top: 2%;">
+            {{ message }}
+        </div>
+    {% endfor %}
+    <div class="container" style="margin-top: 2%;">
+        <form method="post" action=""{{ url_for('api_create') }}"">
+            <div class="form-row">
+                <div class="form-group col-12">
+                    <div class="input-group">
+                        <input class="form-control py-2 border-right-0 border" type="search" name="index" required="required" value="the_gig" placeholder="Index Name..." />
+                    </div>
+                </div>        
+            </div>
+            </br>
+            <div class="form-row">
+                <div class="form-group col-12">
+                    <div class="input-group">
+                        <input class="form-control py-2 border-right-0 border" type="search" name="author" required="required" placeholder="Author ..." />
+                    </div>
+                </div>        
+            </div>
+            </br>
+            <div class="form-row">
+                <div class="form-group col-12">
+                    <div class="input-group">
+                        <input class="form-control py-2 border-right-0 border" type="search" name="article" required="required" placeholder="Article..." />
+                    </div>
+                </div>        
+            </div>  
+            </br>
+            <div class="form-row">
+                <div class="form-group col-12">
+                    <div class="input-group">
+                        <input class="form-control py-2 border-right-0 border" type="search" name="content" required="required" placeholder="Content..." />
+                    </div>
+                </div>        
+            </div>    
+            </br>
+            <div class="form-row">
+                <div class="form-group col-12">
+                    <div class="input-group">
+                        <input class="form-control py-2 border-right-0 border" type="search" name="status" required="required" placeholder="Status..." />
+                    </div>
+                </div>        
+            </div>  
+            </br>
+          <button type="submit" class="btn btn-primary">Create</button>
+      </form>
+    </div>
+{% endblock %}

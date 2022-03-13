@@ -3,6 +3,10 @@ Project repo for momentup company
 
 **NOTE**: *The purpose of the `./lab` directory is to testing new updates before applying to the web app and it is totaly seperated form `./web` which is the main directory of this project.*
 
+> **API endpoints are  and there are some extra works including Frontend. Web APP GUI is developed optionally to the purpose of the testing implementation procedure.**
+
+> **You do not need to interact with Frontend, all requested endpoints for this task works fine**
+
 ---
 ## Setup Steps :
 ```
@@ -63,7 +67,7 @@ chmod +x builder.sh
   * Example : `http://localhost:5000/autocomplete?index="the_gig"?author="me"?content="lorem.."?"status="DRAFT"?article="enivicivokki"`
 ---
 
-## Interacting With Web App Endpoints
+## Testing Web App Endpoints
 
 Via Python :
 ```
@@ -112,4 +116,17 @@ Via Python :
     # print(r.content)
 
 ```
+
+## Testing Via Web APP UI
+
+### Autocomplete
+
+* Go to the : localhost:5000/
+* type random strign to the search bar
+
+### Create 
+* Fill the fields(do not change the_gig, it is default Elasticsearch index name)
+* If record creation succeed, there will be alert on the page, you can copy the specified text from the alert and paste it to the `autocomplete` page to check if the record is created by success.
+
+
 
