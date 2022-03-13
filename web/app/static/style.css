@@ -1,0 +1,13 @@
+ul
+{
+    text-align:left;
+    width: 150px;           
+}
+.ui-autocomplete  
+{
+    max-height: 300px;
+    overflow-y: auto; 
+    overflow-x: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
