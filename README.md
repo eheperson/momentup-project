@@ -1,5 +1,7 @@
 # MOMENTUP Project
-project repo for momentup company
+Project repo for momentup company
+
+**NOTE**: *The purpose of the `./lab` directory is to testing new updates before applying to the web app and it is totaly seperated form `./web` which is the main directory of this project.*
 
 ---
 ## Setup Steps :
@@ -16,8 +18,98 @@ chmod +x builder.sh
 
 ---
 
-## Info Section
-* Elasticsearch URL : `http://localhost:9200`
-* Kibana URL        : `http://localhost:5601`
-* Web APP URL       : `http://localhost:5000`
+## Endpoint Map
+
+### General
+* Elasticsearch Endpoint - `http://localhost:9200` : [Click !](http://localhost:9200) 
+* Kibana Endpoint - `http://localhost:5601` : [Click !](http://localhost:5601) 
+* Web App Endpoint - `http://localhost:5000` : [Click !](http://localhost:5000) 
+
+### Web APP
+
+#### Autocomplete
+* Endpoint : `http://localhost:5000/autocomplete`
+  * Must Parameters :
+    * query     : `'?query='`
+    * index     : `'?index='`
+  * Allowed Request Methods:
+    * POST
+  * Example : `http://localhost:5000/autocomplete?index="the_gig"?query="se"`
+
+
+#### Create
+* Endpoint : `http://localhost:5000/create`
+  * Must Parameters :
+    * index : `'?index='`
+    * author : `'?author='`
+    * content : `'?content='`
+    * status : `'?status='`
+    * article : `'?article='`
+  * Allowed Request Methods:
+    * POST
+  * Example : `http://localhost:5000/autocomplete?index="the_gig"?author="me"?content="lorem.."?"status="DRAFT"?article="enivicivokki"`
+
+#### Search
+* Endpoint : `http://localhost:5000/search`
+  * Must Parameters :
+    * index : `'?index='`
+  * Optional Parameters :
+    * author : `'?author='`
+    * content : `'?content='`
+    * status : `'?status='`
+    * article : `'?article='`
+  * Allowed Request Methods:
+    * GET
+  * Example : `http://localhost:5000/autocomplete?index="the_gig"?author="me"?content="lorem.."?"status="DRAFT"?article="enivicivokki"`
+---
+
+## Interacting With Web App Endpoints
+
+Via Python :
+```
+    # importing required modules
+    import requests
+    import json
+
+    HOST_URL = "http://localhost:5000"
+    INDEX_NAME = "the_gig"
+
+    # Testing /autocomplete endpoint
+    payload={
+        "query": "se",
+    }
+    headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
+    r = requests.post(HOST_URL+"/autocomplete" , data=json.dumps(payload), headers=headers)
+    print(r)
+    # print(r.content)
+
+
+    # Testing /create endpoint
+    payload={
+        "index": "the_gig", 
+        "author": "me", 
+        "article": "NO",
+        "content": "We did it!asdasdasdasdasdasdasdasdasd",
+        "status": "DRAFT",
+    }
+    headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
+    r = requests.post(HOST_URL+"/create" , data=json.dumps(payload), headers=headers)
+    print(r)
+    # print(r.content)
+
+
+    # Testing /search endpoint
+    payload={
+        "index": "the_gig", 
+        "author": "me", 
+        "article": "",
+        "content": "",
+        "status": "",
+    }
+    headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
+    r = requests.get(HOST_URL+"/search" , data=json.dumps(payload), headers=headers)
+    print(r)
+    # print(r.content)
+
+```
 
