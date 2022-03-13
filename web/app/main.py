@@ -95,6 +95,102 @@ class PostCreate(Resource):
         res = es.index(index=self.index, doc_type="_doc", body=self.record)
         print(res, file=sys.stderr)
 #
+class PostSearch(Resource):
+    def __init__(self):
+        self.parser = reqparse.RequestParser()
+        self.parser.add_argument("index", type=str)
+        self.parser.add_argument("author", type=str)
+        self.parser.add_argument("content", type=str)
+        self.parser.add_argument("article", type=str)
+        self.parser.add_argument("status", type=str)
+        #
+        self.index = self.parser.parse_args().get("index","")
+        self.content = self.parser.parse_args().get("content", "")
+        self.article = self.parser.parse_args().get("article", "")
+        self.author = self.parser.parse_args().get("author", "")
+        self.status = self.parser.parse_args().get("status", "")
+        #
+        self.searchQuery ={
+            "size":20,
+            "query": {
+                "bool": {
+                    "must":[],
+                    "filter":[],
+                    "should":[
+                        {
+                            "match":{
+                                "content":{
+                                    "query":self.content
+                                }
+                            }
+                        },
+                        {
+                            "match":{
+                                "status":{
+                                    "query":self.status
+                                }
+                            }
+                        },
+                        {
+                            "match":{
+                                "article":{
+                                    "query":self.article
+                                }
+                            }
+                        },
+                        {
+                            "match_phrase":{
+                                "author":{
+                                    "query":self.author
+                                }
+                            }
+                        },
+                    ],
+                    "must_not":[],
+                }
+            },
+
+            "aggs":{
+                "author":{
+                    "terms":{
+                        "field":"author.keyword",
+                        "order":{
+                            "_key":"asc"
+                        }
+                    }
+                },
+                "content":{
+                    "terms":{
+                        "field":"content.keyword",
+                        "order":{
+                            "_key":"desc"
+                        }
+                    }
+                },
+                "status":{
+                    "terms":{
+                        "field":"status.keyword",
+                        "order":{
+                            "_key":"desc"
+                        }
+                    }
+                },
+                "article":{
+                    "terms":{
+                        "field":"article.keyword",
+                        "order":{
+                            "_key":"desc"
+                        }
+                    }
+                },
+
+            }
+
+        }
+    def get(self):
+        res = es.search(index=self.index, size=0, body=self.searchQuery)
+        return res   
+api.add_resource(PostSearch,'/search')
 api.add_resource(PostAutocomplete, '/autocomplete')
 api.add_resource(PostCreate, '/create')
 

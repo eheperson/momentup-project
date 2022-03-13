@@ -25,5 +25,23 @@ payload={
 headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
 
 # Create Post
-r = requests.get(HOST_URL+"/autocomplete" , data=json.dumps(payload), headers=headers)
-print(r.content)
+r = requests.post(HOST_URL+"/autocomplete" , data=json.dumps(payload), headers=headers)
+print(r)
+# print(r.content)
+
+
+# Search Post
+payload={
+    "index": "the_gig", 
+    "author": "me", 
+    "article": "",
+    "content": "",
+    "status": "",
+}
+headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
+
+
+# Create Post
+r = requests.get(HOST_URL+"/search" , data=json.dumps(payload), headers=headers)
+print(r)
+# print(r.content)
