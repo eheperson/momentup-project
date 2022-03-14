@@ -18,8 +18,9 @@ chmod +x builder.sh
 
 # run the docker
 ./builder.sh
-```
 
+## If you are using windows, just copy and run commands from the `builder.sh` by order.
+```
 ---
 
 ## Endpoint Map
@@ -126,7 +127,7 @@ Via Python :
 
 ### Create 
 * Fill the fields(do not change the_gig, it is default Elasticsearch index name)
-* If record creation succeed, there will be alert on the page, you can copy the specified text from the alert and paste it to the `autocomplete` page to check if the record is created by success.
+* If record creation succeed, there will be alert on the page, you can copy the specified text from the alert and paste it to the **autocomplete** page to check if the record is created by success.
 
 
 
